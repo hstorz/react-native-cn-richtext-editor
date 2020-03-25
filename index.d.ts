@@ -2,6 +2,7 @@ export as namespace CNRichTextEditor;
 
 import { Component, ReactNode } from "react";
 import { StyleProp, StyleSheet, TextStyle, ViewStyle } from "react-native";
+import { WebViewProps } from 'react-native-webview';
 
 export interface CNRichTextEditorProps {
   onSelectedTagChanged?: (tag: string) => void;
@@ -32,11 +33,13 @@ export interface CNEditorProps {
   onBlur?: () => void;
   placeholder?: string;
   textInputStyle?: StyleProp<TextStyle>;
+  webViewProps?: WebViewProps;
 }
 
 export default class CNRichTextEditor extends Component<CNRichTextEditorProps> {
   applyToolbar(toolType: any): void;
   insertImage(uri: any, id?: any, height?: number, width?: number, alt?: string, align?: string): void;
+  insertUrl(url: string): void;
   focus(): void;
   blur(): void;
 }

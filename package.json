@@ -1,12 +1,50 @@
 {
-  "name": "react-native-cn-richtext-editor",
-  "version": "2.0.0-rc3",
-  "description": "RichText Editor for React-Native",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "lint": "eslint src"
+  "_args": [
+    [
+      "git+https://pt-iot@dev.azure.com/pt-iot/hg-app/_git/react-native-cn-richtext-editor.git#next",
+      "/Users/arvaipeti/Documents/--==Projektek==--/hg-app"
+    ]
+  ],
+  "_from": "git+https://pt-iot@dev.azure.com/pt-iot/hg-app/_git/react-native-cn-richtext-editor.git#next",
+  "_id": "react-native-cn-richtext-editor@git+https://pt-iot@dev.azure.com/pt-iot/hg-app/_git/react-native-cn-richtext-editor.git#3c499598e78ae82a37669a91db2391234ec9872d",
+  "_inBundle": false,
+  "_integrity": "",
+  "_location": "/react-native-cn-richtext-editor",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "git",
+    "raw": "git+https://pt-iot@dev.azure.com/pt-iot/hg-app/_git/react-native-cn-richtext-editor.git#next",
+    "rawSpec": "git+https://pt-iot@dev.azure.com/pt-iot/hg-app/_git/react-native-cn-richtext-editor.git#next",
+    "saveSpec": "git+https://pt-iot@dev.azure.com/pt-iot/hg-app/_git/react-native-cn-richtext-editor.git#next",
+    "fetchSpec": "https://pt-iot@dev.azure.com/pt-iot/hg-app/_git/react-native-cn-richtext-editor.git",
+    "gitCommittish": "next"
   },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "git+https://pt-iot@dev.azure.com/pt-iot/hg-app/_git/react-native-cn-richtext-editor.git#3c499598e78ae82a37669a91db2391234ec9872d",
+  "_spec": "git+https://pt-iot@dev.azure.com/pt-iot/hg-app/_git/react-native-cn-richtext-editor.git#next",
+  "_where": "/Users/arvaipeti/Documents/--==Projektek==--/hg-app",
+  "author": {
+    "name": "Narbe HS",
+    "email": "imnapo@gmail.com",
+    "url": "http://learncode.net"
+  },
+  "bugs": {
+    "url": "https://github.com/imnapo/react-native-cn-richtext-editor/issues"
+  },
+  "contributors": [
+    {
+      "name": "Christ Kho",
+      "email": "christ.khodabakhshi@gmail.com",
+      "url": "http://learncode.net"
+    },
+    {
+      "name": "Narbe HS",
+      "email": "imnapo@gmail.com",
+      "url": "http://learncode.net"
+    }
+  ],
   "dependencies": {
     "diff-match-patch": "^1.0.4",
     "immutability-helper": "^2.8.1",
@@ -14,31 +52,7 @@
     "shortid": "^2.2.14",
     "xmldom": "^0.1.27"
   },
-  "peerDependencies": {
-    "react": "^16.6.1",
-    "react-native": "^0.57.5",
-    "react-native-webview": "*"
-  },
-  "keywords": [
-    "react",
-    "react-native",
-    "rich-text",
-    "editor"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/imnapo/react-native-cn-richtext-editor.git"
-  },
-  "contributors": [
-    "Christ Kho <christ.khodabakhshi@gmail.com> (http://learncode.net)",
-    "Narbe HS <imnapo@gmail.com> (http://learncode.net)"
-  ],
-  "author": "Narbe HS <imnapo@gmail.com> (http://learncode.net)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/imnapo/react-native-cn-richtext-editor/issues"
-  },
-  "homepage": "https://github.com/imnapo/react-native-cn-richtext-editor#readme",
+  "description": "RichText Editor for React-Native",
   "devDependencies": {
     "@babel/cli": "^7.2.3",
     "@babel/core": "^7.4.0",
@@ -49,5 +63,29 @@
     "eslint-plugin-import": "^2.16.0",
     "eslint-plugin-jsx-a11y": "^6.2.1",
     "eslint-plugin-react": "^7.12.4"
-  }
+  },
+  "homepage": "https://github.com/imnapo/react-native-cn-richtext-editor#readme",
+  "keywords": [
+    "react",
+    "react-native",
+    "rich-text",
+    "editor"
+  ],
+  "license": "MIT",
+  "main": "index.js",
+  "name": "react-native-cn-richtext-editor",
+  "peerDependencies": {
+    "react": "^16.6.1",
+    "react-native": "^0.57.5",
+    "react-native-webview": "*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/imnapo/react-native-cn-richtext-editor.git"
+  },
+  "scripts": {
+    "lint": "eslint src",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "version": "2.0.0-rc3"
 }

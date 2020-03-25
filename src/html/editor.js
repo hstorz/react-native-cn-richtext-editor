@@ -55,6 +55,9 @@ const editorHTML = `
     <script>
         (function(doc) {
             var editor = document.getElementById('editor');
+            var lastCaretElement = null;
+            var lastCaretPosition = 0;
+            var isBlur = false;
             editor.contentEditable = true;
 
             var getSelectedStyles = function() {
@@ -102,6 +105,9 @@ const editorHTML = `
                         case 'p':
                         tag = 'body';
                         break;
+                      case 'a':
+                        tag = 'anchor';
+                        break;
                     default:
                         break;
                 }
@@ -110,10 +116,25 @@ const editorHTML = `
                     data: tag});
                 sendMessage(stylesJson);
             }
+                        
+            var saveCaretPosition = function(editableDiv) {
+              const sel = window.getSelection();
+              if (sel.rangeCount) {
+                const range = sel.getRangeAt(0);
+                lastCaretElement = range.commonAncestorContainer.parentElement;
+                lastCaretPosition = range.endOffset;
+              }
+            }
 
             document.addEventListener('selectionchange', function() {
                 getSelectedStyles();
                 getSelectedTag();
+                if(!isBlur) {
+                  saveCaretPosition(editor);
+                } else {
+                  isBlur = false;
+                }
+                console.log(isBlur, lastCaretElement, lastCaretPosition);
             });
 
             document.getElementById("editor").addEventListener("input", function() {
@@ -125,109 +146,133 @@ const editorHTML = `
 
             var applyToolbar = function(toolType, value = '') {
                 switch (toolType) {
-                    case 'bold':
-                        document.execCommand('bold', false, '');
-                        break;
-                        case 'italic':
-                        document.execCommand('italic', false, '');
-                        break;
-                        case 'underline':
-                        document.execCommand('underline', false, '');
-                        break;
-                        case 'lineThrough':
-                        document.execCommand('strikeThrough', false, '');
-                        break;
-                        case 'body':
-                        document.queryCommandState('insertUnorderedList') && document.execCommand('insertUnorderedList');
-                        document.queryCommandState('insertorderedlist') && document.execCommand('insertorderedlist');
-                        document.execCommand('formatBlock', false, 'p');
-                        break;
-                        case 'title':
-                        document.queryCommandState('insertUnorderedList') && document.execCommand('insertUnorderedList');
-                        document.queryCommandState('insertorderedlist') && document.execCommand('insertorderedlist');
-
-                        document.execCommand('formatBlock', false, 'h1');
-                        
-                        break;
-                        case 'codeblock':
-                            document.queryCommandState('insertUnorderedList') && document.execCommand('insertUnorderedList');
-                            document.queryCommandState('insertorderedlist') && document.execCommand('insertorderedlist');
-                        // document.execCommand("insertHTML", false, "<pre><code>"+ document.getSelection()+"</code></pre>");
-                        document.execCommand('formatBlock', false, 'pre');
-                        break;
-                        case 'heading':
-                        document.queryCommandState('insertUnorderedList') && document.execCommand('insertUnorderedList');
-                        document.queryCommandState('insertorderedlist') && document.execCommand('insertorderedlist');
-                        document.execCommand('formatBlock', false, 'h3');
-                        break;
-                        case 'ol':
-                        document.execCommand('formatBlock', false, 'p');
-                        document.execCommand('insertorderedlist');
-                        break;
-                        case 'ul':
-                        document.execCommand('formatBlock', false, 'p');
-                        document.execCommand('insertUnorderedList');
-                        break;
-                        case 'color':
-                        document.execCommand('foreColor', false, value);
-                        break;
-                        case 'highlight':
-                        document.execCommand('backColor', false, value);
-                        break;
-                        case 'image':
-                        var img = "<img src='" + value.url + "' id='" + value.id + "' width='" + Math.round(value.width) + "' height='" + Math.round(value.height) + "' alt='" + value.alt + "' />";
-                         if(document.all) {
-                             var range = editor.selection.createRange();
-                             range.pasteHTML(img);
-                             range.collapse(false);
-                             range.select();
-                           } else {
-                             doc.execCommand("insertHTML", false, img);
-                           }
-                        break;
-                       
-                    default:
-                        break;
+                  case 'bold':
+                    document.execCommand('bold', false, '');
+                    break;
+                  case 'italic':
+                    document.execCommand('italic', false, '');
+                    break;
+                  case 'underline':
+                    document.execCommand('underline', false, '');
+                    break;
+                  case 'lineThrough':
+                    document.execCommand('strikeThrough', false, '');
+                    break;
+                  case 'body':
+                    document.queryCommandState('insertUnorderedList') && document.execCommand('insertUnorderedList');
+                    document.queryCommandState('insertorderedlist') && document.execCommand('insertorderedlist');
+                    document.execCommand('formatBlock', false, 'p');
+                    break;
+                  case 'title':
+                    document.queryCommandState('insertUnorderedList') && document.execCommand('insertUnorderedList');
+                    document.queryCommandState('insertorderedlist') && document.execCommand('insertorderedlist');
+                
+                    document.execCommand('formatBlock', false, 'h1');
+                
+                    break;
+                  case 'codeblock':
+                    document.queryCommandState('insertUnorderedList') && document.execCommand('insertUnorderedList');
+                    document.queryCommandState('insertorderedlist') && document.execCommand('insertorderedlist');
+                // document.execCommand("insertHTML", false, "<pre><code>"+ document.getSelection()+"</code></pre>");
+                    document.execCommand('formatBlock', false, 'pre');
+                    break;
+                  case 'heading':
+                    document.queryCommandState('insertUnorderedList') && document.execCommand('insertUnorderedList');
+                    document.queryCommandState('insertorderedlist') && document.execCommand('insertorderedlist');
+                    document.execCommand('formatBlock', false, 'h3');
+                    break;
+                  case 'ol':
+                    document.execCommand('formatBlock', false, 'p');
+                    document.execCommand('insertorderedlist');
+                    break;
+                  case 'ul':
+                    document.execCommand('formatBlock', false, 'p');
+                    document.execCommand('insertUnorderedList');
+                    break;
+                  case 'anchor':
+                    var anchor = '<a href="' + value.url + '">' + value.url + '</a>';
+                    if (document.all) {
+                      var range = editor.selection.createRange();
+                      range.pasteHTML(anchor);
+                      range.collapse(false);
+                      range.select();
+                    } else {
+                      if (lastCaretElement) {
+                        lastCaretElement.innerHTML = lastCaretElement.innerHTML.replace('&nbsp;', ' ');
+                        lastCaretElement.innerHTML = lastCaretElement.innerHTML.substring(0, lastCaretPosition) +  anchor + lastCaretElement.innerHTML.substr(lastCaretPosition);
+                      } else { 
+                        editor.innerHTML = editor.innerHTML.replace('&nbsp;', ' ');
+                        editor.innerHTML = editor.innerHTML.substring(0, lastCaretPosition) +  anchor + editor.innerHTML.substr(lastCaretPosition);
+                      }
+                    }
+                    let contentChanged = JSON.stringify({
+                        type: 'onChange',
+                        data: document.getElementById("editor").innerHTML });
+                    sendMessage(contentChanged);
+                    break;
+                  case 'color':
+                    document.execCommand('foreColor', false, value);
+                    break;
+                  case 'highlight':
+                    document.execCommand('backColor', false, value);
+                    break;
+                  case 'image':
+                    var img = "<img src='" + value.url + "' id='" + value.id + "' width='" + Math.round(value.width) + "' height='" + Math.round(value.height) + "' alt='" + value.alt + "' />";
+                    if (document.all) {
+                      var range = editor.selection.createRange();
+                      range.pasteHTML(img);
+                      range.collapse(false);
+                      range.select();
+                    } else {
+                      doc.execCommand("insertHTML", false, img);
+                    }
+                    break;
+                
+                  default:
+                    break;
                 }
                 getSelectedStyles();
                 getSelectedTag();
             }
 
-            var getRequest = function(event) {
-                 
-              var msgData = JSON.parse(event.data);
-              if(msgData.type === 'toolbar') {
-                applyToolbar(msgData.command, msgData.value || '');
+            var getRequest = function (event) {
+              try {
+                var msgData = JSON.parse(event.data);
+              } catch (error) {
+                // console.log(error);
               }
-              else if(msgData.type === 'editor') {
+              if (msgData.type === 'toolbar') {
+                applyToolbar(msgData.command, msgData.value || '');
+              } else if (msgData.type === 'editor') {
                 switch (msgData.command) {
-                case 'focus':
-                  editor.focus();
-                  break;
-                case 'blur':
-                  editor.blur();
-                  break;
-                case 'getHtml':
-                  sendMessage(
-                    JSON.stringify({
-                    type: 'getHtml',
-                    data: editor.innerHTML})
+                  case 'focus':
+                    editor.focus();
+                    break;
+                  case 'blur':
+                    isBlur = true;
+                    editor.blur();
+                    break;
+                  case 'getHtml':
+                    sendMessage(
+                      JSON.stringify({
+                        type: 'getHtml',
+                        data: editor.innerHTML
+                      })
                     );
-                  break;
-                case 'setHtml':
-                  editor.innerHTML = msgData.value;
-                  break;
+                    break;
+                  case 'setHtml':
+                    editor.innerHTML = msgData.value;
+                    break;
                   case 'style':
                     editor.style.cssText = msgData.value;
                     break;
-                    case 'placeholder':
-                      editor.setAttribute("placeholder", msgData.value);
+                  case 'placeholder':
+                    editor.setAttribute("placeholder", msgData.value);
                     break;
-                default: break;
+                  default:
+                    break;
+                }
               }
-            }
-                 
-                 
             };
 
             document.addEventListener("message", getRequest , false);

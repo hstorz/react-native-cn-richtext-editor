@@ -15,7 +15,6 @@ export function convertToHtmlString(contents, styleList = null) {
 
   for (let i = 0; i < contents.length; i++) {
     const input = contents[i];
-
     if (input.component === 'text') {
       var element = null;
       let parent = null;
@@ -54,6 +53,9 @@ export function convertToHtmlString(contents, styleList = null) {
             break;
           case 'ul':
             tag = 'ul';
+            break;
+          case 'a':
+            tag = 'a';
             break;
 
           default:
@@ -121,6 +123,11 @@ export function convertToHtmlString(contents, styleList = null) {
           element.appendChild(child);
         }
       }
+    } else if (input.component === 'anchor') {
+      element = myDoc.createElement('a');
+      element.setAttribute('href', input.url);
+      element.innerHTML = input.url;
+      myDoc.documentElement.appendChild(element);
     } else if (input.component === 'image') {
       element = myDoc.createElement('img');
       element.setAttribute('src', input.url);
@@ -139,7 +146,7 @@ export function convertToHtmlString(contents, styleList = null) {
 export function convertToObject(htmlString, styleList = null) {
 
   const availableStyles = styleList == null ? defaultStyles : styleList;
-  
+
   const doc = new DOMParser().parseFromString(htmlString, 'text/xml');
   let contents = [];
   let item = null;
@@ -166,13 +173,32 @@ export function convertToObject(htmlString, styleList = null) {
       case 'ol':
         tag = 'ol';
         break;
+      case 'a':
+        tag = 'anchor';
+        break;
 
       default:
         break;
     }
 
 
-    if (tag === 'image') {
+    if (tag === 'anchor') {
+      if (item != null) {
+
+        contents = update(contents, { $push: [item] });
+        item = null;
+      }
+
+      let url = '';
+      if (element.hasAttribute('href') === true) {
+        url = element.getAttribute('href');
+      }
+
+      contents.push({
+        component: 'anchor',
+        url,
+      });
+    } else if (tag === 'image') {
       if (item != null) {
         // contents.push(item);
 
@@ -225,7 +251,7 @@ export function convertToObject(htmlString, styleList = null) {
 
       if (tag == 'ul' || tag == 'ol') {
         for (let k = 0; k < element.childNodes.length; k++) {
-          
+
           const ro = {
             id: shortid.generate(),
             text: tag == 'ol' ? (firstLine == true & k == 0 ? `${k + 1}- ` : `\n${k + 1}- `) : ((firstLine === true && k == 0) ? '\u2022 ' : '\n\u2022 '),
@@ -270,7 +296,7 @@ export function convertToObject(htmlString, styleList = null) {
     contents = update(contents, { $push: [item] });
     item = null;
   }
-  
+
   return contents;
 }
 
@@ -320,7 +346,7 @@ function xmlNodeToItem(child, tag, newLine, styleList = null) {
     } else {
       text = '';
     }
-    
+
   }
 
   const stype = [];
@@ -369,7 +395,7 @@ function xmlNodeToItem(child, tag, newLine, styleList = null) {
   if (isPurpleMarker) {
     stype.push('purple_hl');
   }
-  
+
   return {
     id: shortid.generate(),
     text: newLine === true ? `\n${text}` : text,

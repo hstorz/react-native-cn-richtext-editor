@@ -17,20 +17,20 @@
             margin: 0;
             padding: 2px;
         }
-        code { 
+        code {
             font-family: monospace;
             background-color: #eee;
-            background: hsl(220, 80%, 90%); 
-           
+            background: hsl(220, 80%, 90%);
+
         }
         pre {
             white-space: pre-wrap;
             background: #eee;
             margin: 5px;
-            padding: 5px;      
+            padding: 5px;
             word-wrap: break-word;
         }
-        
+
         #editor {
            flex-grow: 1;
         }
@@ -38,7 +38,7 @@
         #editor:focus {
           outline: 0px solid transparent;
         }
-        
+
       [contenteditable][placeholder]:empty:before {
         content: attr(placeholder);
         position: absolute;
@@ -52,7 +52,7 @@
     <title>CN-Editor</title>
 </head>
 <body>
-  <div id="editor" contenteditable placeholder="Div placeholder..." oninput="if(this.innerHTML.trim()==='<br>')this.innerHTML=''" ></div>
+  <div id="editor" contenteditable placeholder="Div placeholder..." oninput="if(this.innerHTML.trim()==='<br>')this.innerHTML=''"></div>
     <script>
         (function(doc) {
             var editor = document.getElementById('editor');
@@ -75,7 +75,7 @@
                     type: 'selectedStyles',
                     data: {styles, colors}});
                     sendMessage(stylesJson);
-                
+
 
             }
 
@@ -102,6 +102,9 @@
                         break;
                         case 'p':
                         tag = 'body';
+                        break;
+                        case 'a':
+                        tag = 'anchor';
                         break;
                     default:
                         break;
@@ -148,7 +151,7 @@
                         document.queryCommandState('insertorderedlist') && document.execCommand('insertorderedlist');
 
                         document.execCommand('formatBlock', false, 'h1');
-                        
+
                         break;
                         case 'codeblock':
                             document.queryCommandState('insertUnorderedList') && document.execCommand('insertUnorderedList');
@@ -186,7 +189,7 @@
                              doc.execCommand("insertHTML", false, img);
                            }
                         break;
-                       
+
                     default:
                         break;
                 }
@@ -194,46 +197,44 @@
                 getSelectedTag();
             }
 
-            var getRequest = function(event) {
-                 
-              var msgData = JSON.parse(event.data);
-              if(msgData.type === 'toolbar') {
-                applyToolbar(msgData.command, msgData.value || '');
-              }
-              else if(msgData.type === 'editor') {
-                switch (msgData.command) {
-                case 'focus':
-                  editor.focus();
-                  break;
-                case 'blur':
-                  editor.blur();
-                  break;
-                case 'getHtml':
-                  sendMessage(
-                    JSON.stringify({
-                    type: 'getHtml',
-                    data: editor.innerHTML})
-                    );
-                  break;
-                case 'setHtml':
-                  editor.innerHTML = msgData.value;
-                  break;
-                  case 'style':
-                    editor.style.cssText = msgData.value;
-                    break;
-                    case 'placeholder':
-                      editor.setAttribute("placeholder", msgData.value);
-                    break;
-                default: break;
-              }
-            }
-                 
-                 
+            var getRequest = function (event) {
+                var msgData = JSON.parse(event.data);
+                if (msgData.type === 'toolbar') {
+                    applyToolbar(msgData.command, msgData.value || '');
+                } else if (msgData.type === 'editor') {
+                    switch (msgData.command) {
+                        case 'focus':
+                            editor.focus();
+                            break;
+                        case 'blur':
+                            editor.blur();
+                            break;
+                        case 'getHtml':
+                            sendMessage(
+                                JSON.stringify({
+                                    type: 'getHtml',
+                                    data: editor.innerHTML
+                                })
+                            );
+                            break;
+                        case 'setHtml':
+                            editor.innerHTML = msgData.value;
+                            break;
+                        case 'style':
+                            editor.style.cssText = msgData.value;
+                            break;
+                        case 'placeholder':
+                            editor.setAttribute("placeholder", msgData.value);
+                            break;
+                        default:
+                            break;
+                    }
+                }
             };
 
             document.addEventListener("message", getRequest , false);
             window.addEventListener("message", getRequest , false);
-            
+
         })(document)
     </script>
 

@@ -276,6 +276,72 @@ class CNRichTextEditor extends Component {
       );
     }
 
+    addUrlContent = (url) => {
+      const { focusInputIndex } = this.state;
+      const { value } = this.props;
+      let index = focusInputIndex + 1;
+
+      const myHeight = (this.state.layoutWidth - 4 < width) ? height * ((this.state.layoutWidth - 4) / width) : height;
+      this.contentHeights[index] = myHeight + 4;
+
+      const item = {
+        url
+      };
+
+      let newConents = value;
+      if (newConents[index - 1] && newConents[index - 1].component === 'text') {
+        const { before, after } = this.textInputs[index - 1].splitItems();
+
+        if (Array.isArray(before) && before.length > 0) {
+          const beforeContent = {
+            component: 'text',
+            id: newConents[index - 1].id,
+            content: [],
+          };
+
+          if (before[before.length - 1].text === '\n' && before[before.length - 1].readOnly !== true) {
+            beforeContent.content = update(before, { $splice: [[before.length - 1, 1]] });
+          } else {
+            beforeContent.content = before;
+          }
+
+          newConents = update(newConents, { [index - 1]: { $set: beforeContent } });
+
+          if (Array.isArray(after) && after.length > 0) {
+            const afterContent = {
+              component: 'text',
+              id: shortid.generate(),
+              content: [],
+            };
+
+            if (after[0].text.startsWith('\n')) {
+              after[0].text = after[0].text.substring(1);
+              after[0].len = after[0].text.length;
+            }
+
+            afterContent.content = after;
+
+            newConents = update(newConents, { $splice: [[index, 0, afterContent]] });
+            this.textInputs[index - 1].reCalculateTextOnUpate = true;
+          }
+        } else {
+          index -= 1;
+        }
+      }
+
+      newConents = update(newConents, { $splice: [[index, 0, item]] });
+
+      if (newConents.length === index + 1) {
+        newConents = update(newConents, { $splice: [[index + 1, 0, getInitialObject()]] });
+      }
+
+      this.focusOnNextUpdate = index + 1;
+
+      this.props.onValueChanged(
+        newConents,
+      );
+    }
+
     insertImage(url, id = null, height = null, width = null) {
       if (height != null && width != null) {
         this.addImageContent(url, id, height, width);
@@ -284,6 +350,10 @@ class CNRichTextEditor extends Component {
           this.addImageContent(url, id, height, width);
         });
       }
+    }
+
+    insertUrl(url) {
+        this.addUrlContent(url);
     }
 
     removeImage =(index) => {
@@ -451,10 +521,10 @@ class CNRichTextEditor extends Component {
           myWidth = (this.state.layoutWidth - 4 < width) ? this.state.layoutWidth - 4 : width;
         });
       }
-      
+
       myHeight = (this.state.layoutWidth - 4 < width) ? height * ((this.state.layoutWidth - 4) / width) : height;
       myWidth = (this.state.layoutWidth - 4 < width) ? this.state.layoutWidth - 4 : width;
-      
+
       const { ImageComponent = Image } = this.props;
       return (
         <View
@@ -502,7 +572,7 @@ class CNRichTextEditor extends Component {
     applyToolbar(toolType) {
       const { focusInputIndex } = this.state;
 
-      if (toolType === 'body' || toolType === 'title' || toolType === 'heading' || toolType === 'ul' || toolType === 'ol') {
+      if (toolType === 'body' || toolType === 'title' || toolType === 'heading' || toolType === 'ul' || toolType === 'ol' || toolType === 'a') {
         this.textInputs[focusInputIndex].applyTag(toolType);
       } else if (toolType == 'image') {
         // convertToHtmlStringconvertToHtmlString(this.state.contents);

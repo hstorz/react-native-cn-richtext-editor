@@ -121,7 +121,7 @@ const editorHTML = `
               const sel = window.getSelection();
               if (sel.rangeCount) {
                 const range = sel.getRangeAt(0);
-                lastCaretElement = range.commonAncestorContainer.parentElement;
+                lastCaretElement = range.commonAncestorContainer;
                 lastCaretPosition = range.endOffset;
               }
             }
@@ -134,7 +134,6 @@ const editorHTML = `
                 } else {
                   isBlur = false;
                 }
-                console.log(isBlur, lastCaretElement, lastCaretPosition);
             });
 
             document.getElementById("editor").addEventListener("input", function() {

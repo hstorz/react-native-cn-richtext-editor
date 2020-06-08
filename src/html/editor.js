@@ -181,11 +181,11 @@ const editorHTML = `
                     document.execCommand('formatBlock', false, 'h3');
                     break;
                   case 'ol':
-                    document.execCommand('formatBlock', false, 'p');
+                    // document.execCommand('formatBlock', false, 'p');
                     document.execCommand('insertorderedlist');
                     break;
                   case 'ul':
-                    document.execCommand('formatBlock', false, 'p');
+                    // document.execCommand('formatBlock', false, 'p');
                     document.execCommand('insertUnorderedList');
                     break;
                   case 'anchor':

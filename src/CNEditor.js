@@ -299,7 +299,7 @@ export default class CNEditor extends Component {
                     domStorageEnabled={true}
                     mixedContentMode='always'
                     onMessage={this.onMessage}
-                    renderError={(error) => console.log('error:', error)}
+                    // renderError={(error) => console.log('error:', error)}
                     {...this.props.webViewProps}
                 />
             </View>

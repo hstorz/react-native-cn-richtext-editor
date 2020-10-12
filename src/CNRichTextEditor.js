@@ -194,8 +194,8 @@ class CNRichTextEditor extends Component {
         if (this.textInputs.length > 0) {
           const ref = this.textInputs[this.textInputs.length - 1];
           ref.focus({
-            start: 0, // ref.textLength,
-            end: 0, // ref.textLength
+            start: ref.textLength, // 0,
+            end: ref.textLength, // 0
           });
         }
       } catch (error) {
